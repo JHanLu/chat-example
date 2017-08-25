@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Socket.IO chat</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html,body { height: 100%; }
+      body { font: 13px Helvetica, Arial; }
+      #getname { height: 100%; position: relative; z-index: 1000; background: black; color: white; text-align: center;}
+      input { width: 30%; height:50px; font-size: 20px}
+      #form2 { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+      #form2 input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+      #form2 button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; font-size: 16px}
+      #messages li:nth-child(odd) { background: #eee; }
+    </style>
+  </head>
+  <body>
+    <div id="getname">
+      <form action="" id="form1">
+      <h1>What's your nick name</h1>
+      <input type="text" id="nickname">
+      </form>
+    </div>
+    <ul id="messages"></ul>
+    <form action="" id="form2">
+      <input id="m" autocomplete="off" /><button>Send</button>
+    </form>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+      $(function(){
+        let nickname;
+        $('#form1').submit(function(){
+          if($('#nickname').val().trim()==""){
+            alert("请输入正确格式")
+          }
+          else{
+            nickname = $('#nickname').val().trim();
+            $('#getname').css('display','none')
+          }
+          $('#nickname').val('');
+          return false;
+        });
+        var socket = io();
+        $('#form2').submit(function(){
+          socket.emit('chat message',nickname+" : "+$('#m').val());
+          $('#m').val('');
+          return false;
+        });
+        socket.on('chat message',function(msg){
+          $('#messages').append($('<li>').text(msg));
+        })
+      });
+    </script>
+  </body>
+</html>
